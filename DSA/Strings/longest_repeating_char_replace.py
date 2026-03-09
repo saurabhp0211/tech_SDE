@@ -1,5 +1,5 @@
 str = "ABAABB"
-k=2
+k=1
 max_l=0
 
 # brute force O(n)3
