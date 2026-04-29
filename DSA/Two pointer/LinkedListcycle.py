@@ -1,6 +1,6 @@
 class Listnode:
-    def __init__(self,x):
-        self.val=x
+    def __init__(self,val):
+        self.data=val
         self.next=None
 
 l1=Listnode(3)
