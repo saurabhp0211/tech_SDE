@@ -10,12 +10,27 @@ class ExpenseBase(BaseModel):
     category: str= Field(..., example="Food")
     expense_date: Optional[date]= Field(default_factory=date.today)
 
+class UserBase(BaseModel):
+    email:str
+
+
 
 # input from the user
+class UserCreate(UserBase):
+    password:str
+
 class ExpenseCreate(ExpenseBase):
-    pass 
+    owner_id:int
+
 
 # Schema for reading an expense
+class UserResponse(UserBase):
+    id:int
+
+    class Config:
+        from_attributes:True
+
+
 class ExpenseResponse(ExpenseBase):
     id:int
 
@@ -27,6 +42,9 @@ class ExpenseUpdate(BaseModel):
     amount: Optional[float]=None
     category:Optional[str]=None
     expense_date: Optional[date]=None
+
+
+
 
 
 

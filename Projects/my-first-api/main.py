@@ -1,6 +1,8 @@
 from fastapi import FastAPI,Depends,HTTPException
-from schemas import ExpenseCreate, ExpenseResponse,ExpenseUpdate
+from schemas import ExpenseCreate, ExpenseResponse,ExpenseUpdate,UserResponse,UserCreate
 from sqlalchemy.orm import Session
+from typing import Optional
+from utils import hash_password
 import models
 from database import engine, get_db
 
@@ -20,11 +22,45 @@ def read_root():
         "version":"1.0.0"
     }
 
-@app.get("/expenses",response_model=list[ExpenseResponse])
-def get_expenses(db: Session=Depends(get_db)):
-    expenses=db.query(models.Expense).all()
-    return expenses
+@app.post("/users",response_model=UserResponse)
+def create_user(user:UserCreate,db:Session=Depends(get_db)):
+    db_user=db.query(models.User).filter(models.User.email==user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
 
+    hashed_pwd=hash_password(user.password)
+    new_user=models.User(email=user.email, hashed_password=hashed_pwd)
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+@app.get("/users/{user_id}",response_model=UserResponse)
+def get_user(user_id:int,db:Session=Depends(get_db)):
+    user=db.quert(models.User).filter(models.User.id==user_id).first()
+    if not user:
+        raise HTTPException(status_code=404,detail="User not found")
+    return user
+
+
+
+
+
+@app.get("/expenses",response_model=list[ExpenseResponse])
+def get_expenses(category:Optional[str]=None, db: Session=Depends(get_db)):
+    query=db.query(models.Expense)
+
+    if category:
+        query=query.filter(models.Expense.category==category)
+    
+    return query.all()
+                           
+    
+                   
+
+  
 @app.post("/expenses", response_model=ExpenseResponse)
 def create_expense(expense:ExpenseCreate,db:Session=Depends(get_db)):
 
@@ -32,7 +68,8 @@ def create_expense(expense:ExpenseCreate,db:Session=Depends(get_db)):
         title=expense.title,
         amount=expense.amount,
         category=expense.category,
-        expense_date=expense.expense_date
+        expense_date=expense.expense_date,
+        owner_id=expense.owner_id
     )
 
     db.add(new_expense)
