@@ -14,7 +14,7 @@ def mergeArr(nums1,m,nums2,n):
         else:
             nums1[k]=nums2[j]
             j-=1
-        k-=1
+            k-=1
     
     return nums1
 
