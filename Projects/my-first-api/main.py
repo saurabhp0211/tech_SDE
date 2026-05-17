@@ -2,6 +2,7 @@ from fastapi import FastAPI,Depends,HTTPException
 from schemas import ExpenseCreate, ExpenseResponse,ExpenseUpdate,UserResponse,UserCreate
 from sqlalchemy.orm import Session
 from typing import Optional
+from typing import List
 from utils import hash_password
 import models
 from database import engine, get_db
@@ -39,7 +40,7 @@ def create_user(user:UserCreate,db:Session=Depends(get_db)):
 
 @app.get("/users/{user_id}",response_model=UserResponse)
 def get_user(user_id:int,db:Session=Depends(get_db)):
-    user=db.quert(models.User).filter(models.User.id==user_id).first()
+    user=db.query(models.User).filter(models.User.id==user_id).first()
     if not user:
         raise HTTPException(status_code=404,detail="User not found")
     return user
@@ -63,6 +64,11 @@ def get_expenses(category:Optional[str]=None, db: Session=Depends(get_db)):
   
 @app.post("/expenses", response_model=ExpenseResponse)
 def create_expense(expense:ExpenseCreate,db:Session=Depends(get_db)):
+
+    user=db.query(models.User).filter(models.User.id==expense.owner_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User with id {expense.owner_id} does not exist")
 
     new_expense=models.Expense(
         title=expense.title,
@@ -94,7 +100,12 @@ def update_expense(expense_id:int,updated_data:ExpenseUpdate,db:Session=Depends(
 
     return db_expense
 
+@app.get("/users",response_model=List[UserResponse])
+def read_users(skip:int=0,limit:int=100, db: Session=Depends(get_db)):
+    users=db.query(models.User).offset(skip).limit(limit).all()
+    return users
 
+    
 
 
                                   

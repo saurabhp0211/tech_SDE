@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 from datetime import date
 
@@ -17,6 +17,7 @@ class UserBase(BaseModel):
 
 # input from the user
 class UserCreate(UserBase):
+    email:EmailStr
     password:str
 
 class ExpenseCreate(ExpenseBase):
@@ -26,6 +27,7 @@ class ExpenseCreate(ExpenseBase):
 # Schema for reading an expense
 class UserResponse(UserBase):
     id:int
+    email:EmailStr
 
     class Config:
         from_attributes:True

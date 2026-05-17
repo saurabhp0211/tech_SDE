@@ -14,7 +14,7 @@ class Expense(Base):
 
     owner_id=Column(Integer,ForeignKey("users.id"))
 
-    onwer=relationship("User",back_populates="expenses")
+    owner=relationship("User",back_populates="expenses")
 
 class User(Base):
     __tablename__="users"
@@ -23,4 +23,4 @@ class User(Base):
     email=Column(String,unique=True,index=True)
     hashed_password=Column(String)
 
-    expenses=relationship("Expenses",back_populates="owner")
+    expenses=relationship("Expense",back_populates="owner")
