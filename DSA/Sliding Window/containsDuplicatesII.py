@@ -27,3 +27,10 @@ def containsDupli(nums,k):
 print(containsDupli(nums,k))
 
     
+numees=[1,2,3,1], k=3
+def contD(numees,k):
+    seen={}
+    for i, num in enumerate(numees):
+        if num in seen:
+            if i-seen[num]<=k:
+                return True
