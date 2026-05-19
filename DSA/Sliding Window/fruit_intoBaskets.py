@@ -13,10 +13,12 @@ def fruit_intobaskets(fruits):
                 del baskets[fruits[l]]
             l+=1  
         maxl=max(r-l+1,maxl)
-        
+
     return maxl
 
 print(fruit_intobaskets(fruits))
+
+
 
 
         
