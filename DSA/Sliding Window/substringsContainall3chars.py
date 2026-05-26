@@ -19,7 +19,6 @@ def substrContAll3(s):
     return count
 
 
-
 print(substrContAll3(s))
         
 
