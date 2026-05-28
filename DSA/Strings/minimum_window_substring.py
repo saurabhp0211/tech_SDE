@@ -14,7 +14,6 @@ for i in range(len(s)):
         char=s[j]
         counts[char]=counts.get(char,0)+1
 
-
         is_valid=True
         for t_char in target_count:
             if counts.get(t_char,0)<target_count[t_char]:
